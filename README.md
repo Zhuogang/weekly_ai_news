@@ -9,6 +9,7 @@ Archive of the AI Research & Engineering Digest, with one Markdown file per repo
 | 2026-10-28 | [October 28](reports/2026/2026-10-28.partial.md) | Partial: begins inside item 3; introduction and items 1–2 are unavailable |
 | 2026-11-01 | [November 1](reports/2026/2026-11-01.md) | Complete text |
 | 2026-11-04 | [November 4](reports/2026/2026-11-04.md) | Complete text |
+| 2026-11-08 | [November 8](reports/2026/2026-11-08.md) | Complete text |
 
 The historical backfill is **incomplete**. Earlier reports need their original conversation text before they can be archived faithfully. No reconstructed summaries or empty report placeholders are included.
 
