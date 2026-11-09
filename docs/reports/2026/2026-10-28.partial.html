@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>October 28, 2026 digest · AI Fieldnotes</title><meta name="description" content="84.6 overall on MPDocBench."><meta name="color-scheme" content="light dark"><link rel="canonical" href="https://zhuogang.github.io/weekly_ai_news/reports/2026/2026-10-28.partial.html">
+<link rel="stylesheet" href="../../assets/style.css">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml"><script src="../../assets/site.js" defer></script></head>
+<body><a class="skip" href="#main">Skip to content</a><header class="site-header"><a class="brand" href="../../index.html"><span class="brand-icon" aria-hidden="true">a/f</span><span>AI Fieldnotes<small>Research & engineering digest</small></span></a><nav aria-label="Main navigation"><a href="../../index.html#archive">Archive</a><a href="https://github.com/Zhuogang/weekly_ai_news">GitHub ↗</a></nav></header>
+<main id="main" class="report-main"><div class="report-toolbar"><a href="../../index.html#archive">← All issues</a><span>October 28, 2026 · Partial archive</span><a href="https://github.com/Zhuogang/weekly_ai_news/blob/main/reports/2026/2026-10-28.partial.md">View Markdown ↗</a></div><aside class="partial-banner"><strong>Partial archive.</strong> This is an incomplete recovered original. Missing material has not been reconstructed.</aside><div class="report-layout"><aside class="contents"><p class="eyebrow">In this issue</p><nav aria-label="Table of contents"><a href="#4-gpt-6-1-terra-targets-high-volume-visual-computer-work">4. GPT-6.1 Terra targets high-volume visual computer work</a><a href="#5-language-models-need-sleep-reframes-continual-learning-as-periodic-consolidation">5. “Language Models Need Sleep” reframes continual learning as periodic consolidation</a><a href="#6-trial-by-trace-separates-the-task-passed-from-the-harness-behaved-correctly">6. Trial by Trace separates “the task passed” from “the harness behaved correctly”</a><a href="#7-fork-adds-precision-to-rubric-based-rl">7. FORK adds precision to rubric-based RL</a><a href="#8-nvidia-s-moe-optimization-post-is-really-about-validating-composition">8. NVIDIA’s MoE optimization post is really about validating composition</a><a href="#the-two-deeper-reads-i-d-choose">The two deeper reads I’d choose</a><a href="#one-concrete-experiment-edge-triage-before-expensive-fv-verification">One concrete experiment: edge triage before expensive FV verification</a></nav><a class="text-link" href="https://github.com/Zhuogang/weekly_ai_news/blob/main/reports/2026/2026-10-28.partial.md">Original & sources ↗</a></aside><article class="prose"><h1 id="ai-research-engineering-digest-october-28-2026">AI Research &amp; Engineering Digest — October 28, 2026</h1>
+<blockquote>
+<p><strong>Partial archive.</strong> The recovered original text begins partway through item 3 (Unlimited-OCR). The introduction, items 1–2, and the opening of item 3 are missing. The excerpt below preserves the available original text, with ChatGPT citation widgets omitted. This file should be replaced with <code>2026-10-28.md</code> when the complete original is recovered.</p>
+</blockquote>
+<hr>
+<p>, avoids attending from every generated token to all previous page tokens. Instead, it keeps a fixed working set—such as 512 relevant visual references—selected from the document. The resulting per-step latency and memory are intended to remain nearly constant as the number of processed pages grows.</p>
+<p>The intuition is useful beyond OCR:</p>
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>recent local state</mtext><mo>+</mo><mtext>sparse retrieved historical state</mtext></mrow><annotation encoding="application/x-tex">\text{recent local state}+\text{sparse retrieved historical state}</annotation></semantics></math></span>
+<p>This is the same general pattern appearing in streaming video, agent memory, and very-long-context inference. “Unlimited” does not mean perfect access to every historical detail; it means bounded computation over a selectively retained or retrieved history.</p>
+<p>Baidu reports:</p>
+<ul>
+<li>84.6 overall on MPDocBench.</li>
+<li>77.06 on its new hundred-page MarathonDocBench.</li>
+<li>89.6 text-edit score, 87.9 formula score, and 85.3 reading-order score on MarathonDocBench.</li>
+<li>Only 48.2 on heading hierarchy, suggesting that very-long structural reconstruction remains difficult.</li>
+</ul>
+<p>The 77.06 result is far above the next listed model’s 33.7—but both the model and MarathonDocBench were released by the same team at the same time. This is author-run evidence, with no independent reproduction yet. The benchmark includes 100 documents of 100–300 pages, so it is at least inspectable rather than an entirely private test.</p>
+<p>Deployment is less frictionless than the model card’s headline suggests. Transformers can run small tests, but serious serving uses a customized SGLang wheel and numerous memory knobs. The reference configuration was tested on an A800-80GB. Smaller page windows reduce memory but can break cross-page table or block merging at window boundaries.</p>
+<p>For your work, I would test it on <strong>multi-image retail evidence</strong>, not ordinary single-crop OCR: successive product views, price-tag images, planogram pages, historical candidates, and scan metadata. The sparse-reference behavior may be more interesting than its raw OCR score.</p>
+<p><strong>Read/run:</strong> <a href="https://github.com/baidu/Unlimited-OCR">GitHub repository</a> · <a href="https://huggingface.co/baidu/Unlimited-OCR-2">model card</a> · <a href="https://huggingface.co/datasets/baidu/MarathonDocBench">MarathonDocBench</a>.</p>
+<h2 id="4-gpt-6-1-terra-targets-high-volume-visual-computer-work">4. GPT-6.1 Terra targets high-volume visual computer work</h2>
+<p><em>Commercial model release · October 26</em></p>
+<p>OpenAI released <strong>GPT-6.1 Terra</strong>, positioned below Sol and Astra on cost and difficult reasoning, but optimized for visual reasoning, computer use, coding, and ordinary professional work.</p>
+<p>The API model has a 1.05M-token context window, 128K maximum output, computer-use support, tool calling through the Responses API, and standard pricing of $1/M input and $5/M output tokens.</p>
+<p>Provider-reported results include:</p>
+<ul>
+<li>A 15-point improvement over GPT-5.6 Terra on Agents’ Last Exam at medium effort, at roughly one-third the cost.</li>
+<li>50.3% on Terminal-Bench 4.0 at maximum effort, versus the published 21.5% for GPT-5.6 Terra.</li>
+<li>More than 3× faster completion than Astra and Sol on the cited computer-work evaluation.</li>
+<li>An internal factual-error rate falling from 53.6% to 16.7% at low effort, and to 4.3% at maximum effort.</li>
+</ul>
+<p>These are OpenAI-run evaluations. “Cost per task” also depends heavily on harness design, retries, reasoning effort, screenshot frequency, and whether errors require human recovery.</p>
+<p>The meaningful product shift is that capable visual computer use is moving from a premium frontier-model feature toward a volume tier. For applied teams, this makes model cascades more attractive: let a faster model handle straightforward document and interface work, then escalate ambiguous or high-impact cases.</p>
+<p><strong>Read:</strong> <a href="https://openai.com/index/introducing-gpt-6-1-terra/">GPT-6.1 Terra release</a> · <a href="https://developers.openai.com/api/docs/models/gpt-6.1-terra">API model documentation</a>.</p>
+<h2 id="5-language-models-need-sleep-reframes-continual-learning-as-periodic-consolidation">5. “Language Models Need Sleep” reframes continual learning as periodic consolidation</h2>
+<p><em>Older paper newly spotlighted by Google Research on October 27</em></p>
+<p>This is not a new paper: an earlier version was publicly available in 2025, and the current arXiv revision dates to July 2026. Google’s new technical post brought it back into view.</p>
+<p>The proposed lifecycle alternates between:</p>
+<ol>
+<li><strong>Wake:</strong> the model processes new inputs using fast, temporary memory.</li>
+<li><strong>Sleep:</strong> it expands or unlocks low-rank expert capacity and distills recent behavior into slower, more stable parameters.</li>
+<li><strong>Dreaming:</strong> it randomly mixes experts, generates synthetic exercises, selects useful gradient directions, and further trains on them.</li>
+<li><strong>Pruning/reset:</strong> temporary high-frequency parameters are reset for the next cycle.</li>
+</ol>
+<p>The most useful idea is not the neuroscience vocabulary. It is the separation between:</p>
+<ul>
+<li>Raw recent experience.</li>
+<li>Fast, editable memory.</li>
+<li>Stable parametric memory.</li>
+<li>Periodic offline consolidation.</li>
+</ul>
+<p>The authors report continual learning without the severe forgetting seen in ordinary sequential SFT, long-context knowledge incorporation up to 10M tokens, and gains in factual and mathematical reasoning. These are proof-of-concept experiments using a specialized expandable architecture—not a drop-in procedure demonstrated on a production frontier model.</p>
+<p>Important limitations:</p>
+<ul>
+<li>Parameter expansion moves some of the forgetting problem into capacity management.</li>
+<li>Self-generated “dreams” can reinforce mistakes or biases.</li>
+<li>Updating a deployed model from user interactions introduces privacy, poisoning, rollback, and audit problems.</li>
+<li>I could not verify released training code.</li>
+</ul>
+<p><strong>Read:</strong> <a href="https://research.google/blog/the-sleep-framework-a-new-way-for-llms-to-retain-knowledge-in-continual-learning/">Google Research explanation</a> · <a href="https://arxiv.org/abs/2606.03979">paper</a>.</p>
+<h2 id="6-trial-by-trace-separates-the-task-passed-from-the-harness-behaved-correctly">6. Trial by Trace separates “the task passed” from “the harness behaved correctly”</h2>
+<p><em>Paper, benchmark, and code · published October 23; surfaced October 27</em></p>
+<p><strong>TraceTrial-Bench</strong> evaluates seven harness responsibilities:</p>
+<ul>
+<li>Context.</li>
+<li>Execution.</li>
+<li>Governance.</li>
+<li>Lifecycle.</li>
+<li>Observability.</li>
+<li>Tools.</li>
+<li>Verification.</li>
+</ul>
+<p>Its 95 expert-designed tasks use executable or state-based ground truth. A tracing module captures trajectories, while multi-source evidence combines agent context, harness state, and the execution environment to attribute failures through explicit mechanism chains.</p>
+<p>Across four harnesses, nine models, and 3,420 runs, harness scores ranged from 59.8% to 72.0%. The headline result is that <strong>31.1% of runs completed the task while still violating at least one harness criterion</strong>.</p>
+<p>That is extremely relevant to production AI. A pipeline can store the correct UPC while still:</p>
+<ul>
+<li>Reusing evidence from the wrong scan.</li>
+<li>Silently dropping a failed image.</li>
+<li>Skipping a required verification step.</li>
+<li>Mishandling cancellation or retry state.</li>
+<li>Exposing sensitive context.</li>
+<li>Producing an unauditable final decision.</li>
+</ul>
+<p>The benchmark is small, and part of its assessment uses LLM-based evaluation over collected evidence. Its seven-component taxonomy also reflects the authors’ design choices rather than an established standard. Still, the benchmark, dataset, and code are public, so teams can inspect the actual criteria and adapt them.</p>
+<p><strong>Read/run:</strong> <a href="https://arxiv.org/abs/2610.32285">paper</a> · <a href="https://github.com/TraceLite-AI/TraceTrial-Bench">repository</a>.</p>
+<h2 id="7-fork-adds-precision-to-rubric-based-rl">7. FORK adds precision to rubric-based RL</h2>
+<p><em>Paper and early code · published October 24; surfaced October 27</em></p>
+<p>Rubric rewards generally pay a model for covering required points. That is a recall objective. A model can maximize it by mentioning everything remotely relevant, producing long answers with more unsupported or incorrect statements.</p>
+<p>The <strong>FORK</strong> reward adds a response-level precision term. Each unit of the response must be:</p>
+<ul>
+<li>Necessary according to the rubric.</li>
+<li>Factually correct according to a grader.</li>
+</ul>
+<p>The authors report similar rubric coverage with shorter, more precise answers. Against the base policy, reported win rates rise from 10.6% to 68.0% on RubricHub-Medical and from 22.1% to 74.1% on HealthBench.</p>
+<p>The transfer to your evaluation work is straightforward. If a VLM receives reward for mentioning every possible product attribute, it will learn exhaustive speculation. A better objective rewards supported required fields while penalizing unsupported extras:</p>
+<span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>R</mi><mo>≈</mo><munder><munder><mtext>required evidence recovered</mtext><mo stretchy="true">⏟</mo></munder><mtext>recall</mtext></munder><mo>+</mo><munder><munder><mtext>claims supported by evidence</mtext><mo stretchy="true">⏟</mo></munder><mtext>precision</mtext></munder></mrow><annotation encoding="application/x-tex">R \approx \underbrace{\text{required evidence recovered}}_{\text{recall}}
++
+\underbrace{\text{claims supported by evidence}}_{\text{precision}}</annotation></semantics></math></span>
+<p>The caveat is recursive: factuality and necessity are themselves judged by models, so FORK can shift reward hacking into the graders. The medical win rates are author-reported and should not be interpreted as clinical validation.</p>
+<p><strong>Read:</strong> <a href="https://arxiv.org/abs/2610.33512">FORK paper</a>.</p>
+<h2 id="8-nvidia-s-moe-optimization-post-is-really-about-validating-composition">8. NVIDIA’s MoE optimization post is really about validating composition</h2>
+<p><em>Engineering write-up · October 27</em></p>
+<p>NVIDIA profiled Ling-3.0-flash, a 124B-total/5.1B-active MoE, on one DGX Spark at batch size one. Decoding was memory-bound, particularly in routed-expert kernels and the enormous vocabulary projection.</p>
+<p>It stacked three optimizations:</p>
+<ol>
+<li>Shape-specialized Humming MXFP4 MoE kernels.</li>
+<li>Online FP8 quantization of the LM head.</li>
+<li>NEXTN multi-token speculative decoding.</li>
+</ol>
+<p>On a synthetic 32K-input/2K-output workload, cumulative throughput rose from 36.09 to 102.88 tokens/sec—an eye-catching 185%. On the full GSM8K test set, where outputs and sampling were more realistic, the actual improvement was <strong>42.5% in decode throughput</strong> and <strong>24.5% in mean latency</strong>, with a reported 0.08-point accuracy difference.</p>
+<p>The best detail is a failure. When FP8 and speculative decoding were enabled together, the draft model shared only the LM-head weight tensor—not the complete quantized module. It interpreted FP8 weights incorrectly, acceptance collapsed to one token, and performance became worse than baseline. Sharing the full module fixed it.</p>
+<p>That is a wonderful production lesson:</p>
+<blockquote>
+<p>Validate that every optimization is actually active and semantically compatible; configuration flags are not evidence.</p>
+</blockquote>
+<p>The experiment covers one model, one device, batch size one, and a math workload. It does not establish a universal 42.5% MoE speedup. But the post clearly separates synthetic and application-level results and provides the configuration path.</p>
+<p><strong>Read:</strong> <a href="https://developer.nvidia.com/blog/3-ways-to-boost-moe-inference-on-nvidia-dgx-spark/">NVIDIA’s MoE inference write-up</a>.</p>
+<h2 id="the-two-deeper-reads-i-d-choose">The two deeper reads I’d choose</h2>
+<ol>
+<li><p><strong><a href="https://huggingface.co/blog/LiquidAI/lfm3">LFM3 technical release</a></strong> — the most relevant model-design read for you. The tri-hybrid backbone, small encoders, decision variants, and single-GPU specialization form a coherent edge-multimodal strategy.</p>
+</li>
+<li><p><strong><a href="https://arxiv.org/abs/2610.32285">Trial by Trace</a></strong> — the best evaluation read. Its central distinction—task success versus harness reliability—is immediately useful for reviewing multi-stage VLM and agent pipelines.</p>
+</li>
+</ol>
+<h2 id="one-concrete-experiment-edge-triage-before-expensive-fv-verification">One concrete experiment: edge triage before expensive FV verification</h2>
+<p>Build a 1,000-case test in which a local <code>d1-2B</code> or <code>LFM3-VL-2B</code> decides whether a product-candidate pair is easy enough to resolve locally.</p>
+<p>Use five actions:</p>
+<ul>
+<li><code>accept</code></li>
+<li><code>reject</code></li>
+<li><code>run_ocr</code></li>
+<li><code>send_to_cloud_vlm</code></li>
+<li><code>send_to_human_qa</code></li>
+</ul>
+<p>Include hard counterfactuals: correct brand but wrong flavor, size, count, or package generation; metadata with a blurred crop; and evidence copied from another scan.</p>
+<p>Compare:</p>
+<ol>
+<li>Current cloud VLM on every case.</li>
+<li>Local LFM3-VL generative decision.</li>
+<li>Local d1 bounded decision.</li>
+<li>Local triage followed by your current cloud verifier only when uncertain.</li>
+</ol>
+<p>Measure fixed-false-accept-rate recall, calibration, device latency, energy, cloud-call reduction, and final pipeline cost. Also trace whether the correct result was reached through valid current evidence.</p>
+<p>The key question is not whether a 2B model can replace the cloud model. It is:</p>
+<p><strong>Can it safely remove 40–60% of the obvious cases while keeping nearly all risky variant and size decisions in the expensive path?</strong></p>
+<nav class="issue-nav" aria-label="Other issues"><span></span><a href="../2026/2026-11-01.html">November 1, 2026 →</a></nav></article></div></main>
+<footer class="site-footer"><span>Curated for curious researchers. Built for useful work.</span><a href="https://github.com/Zhuogang/weekly_ai_news">Markdown originals ↗</a><p>Historical backfill is incomplete. Partial reports are labeled; archived claims are preserved as written and are not revalidated by publication.</p></footer></body></html>

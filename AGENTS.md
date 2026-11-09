@@ -8,3 +8,12 @@
 - Keep `README.md` current with a chronological report index and accurate backfill status. Never claim a complete backfill while reports remain missing.
 - Read the current branch head before writing; preserve existing files and use a normal fast-forward commit on `main`. Never force-push.
 - Verify that the remote commit contains the files before reporting a successful archive.
+
+## GitHub Pages reading site
+
+- The public reading site is `https://zhuogang.github.io/weekly_ai_news/`, published from `main:/docs` through GitHub Pages.
+- Markdown reports remain canonical. Never edit report prose merely to change website layout.
+- After adding or changing a report, run `npm ci --ignore-scripts`, `npm run build`, and `npm run check`. Commit the generated `docs/` alongside the report and README index. The builder automatically updates the homepage, archive, report pages, and navigation.
+- Change design in `site/assets/` and generation in `scripts/build-site.mjs`; do not hand-edit `docs/`.
+- Preserve complete versus partial labels and accurate historical-backfill status on the website.
+- Verify the remote commit includes the generated site. Check the live dated report when possible; report publishing failures honestly without withholding the chat digest.

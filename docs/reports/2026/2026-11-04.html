@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>November 4, 2026 digest · AI Fieldnotes</title><meta name="description" content="Routing is becoming a serious systems discipline. The interesting question is no longer merely “which model is cheaper?” but what the router can observe, how it preserves cache locality, and whether it optimizes cost per verified success."><meta name="color-scheme" content="light dark"><link rel="canonical" href="https://zhuogang.github.io/weekly_ai_news/reports/2026/2026-11-04.html">
+<link rel="stylesheet" href="../../assets/style.css">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml"><script src="../../assets/site.js" defer></script></head>
+<body><a class="skip" href="#main">Skip to content</a><header class="site-header"><a class="brand" href="../../index.html"><span class="brand-icon" aria-hidden="true">a/f</span><span>AI Fieldnotes<small>Research & engineering digest</small></span></a><nav aria-label="Main navigation"><a href="../../index.html#archive">Archive</a><a href="https://github.com/Zhuogang/weekly_ai_news">GitHub ↗</a></nav></header>
+<main id="main" class="report-main"><div class="report-toolbar"><a href="../../index.html#archive">← All issues</a><span>November 4, 2026 · ~12 min read</span><a href="https://github.com/Zhuogang/weekly_ai_news/blob/main/reports/2026/2026-11-04.md">View Markdown ↗</a></div><div class="report-layout"><aside class="contents"><p class="eyebrow">In this issue</p><nav aria-label="Table of contents"><a href="#1-longcat-2-5-combines-native-visual-tokens-with-long-horizon-agent-training">1. LongCat-2.5 combines native visual tokens with long-horizon agent training</a><a href="#2-openai-demonstrates-an-agent-spanning-cad-pcb-design-firmware-and-manufacturing">2. OpenAI demonstrates an agent spanning CAD, PCB design, firmware and manufacturing</a><a href="#3-lifeval-evaluates-personalized-agents-using-files-history-and-actual-state-changes">3. LifeVal evaluates personalized agents using files, history and actual state changes</a><a href="#4-route-anything-quantifies-both-the-promise-and-disappointment-of-model-routing">4. Route Anything quantifies both the promise and disappointment of model routing</a><a href="#5-google-s-routing-write-up-is-valuable-because-it-reports-what-failed">5. Google’s routing write-up is valuable because it reports what failed</a><a href="#6-factembed-gives-composed-retrieval-an-internal-representation-of-what-changes">6. FactEmbed gives composed retrieval an internal representation of “what changes”</a><a href="#7-specpilot-uses-agents-to-discover-verified-speculative-decoding-optimizations">7. SpecPilot uses agents to discover verified speculative-decoding optimizations</a><a href="#the-two-deeper-reads-i-d-choose">The two deeper reads I’d choose</a><a href="#one-concrete-experiment-attribute-delta-retrieval-for-upc-level-hard-negatives">One concrete experiment: attribute-delta retrieval for UPC-level hard negatives</a></nav><a class="text-link" href="https://github.com/Zhuogang/weekly_ai_news/blob/main/reports/2026/2026-11-04.md">Original & sources ↗</a></aside><article class="prose"><h1 id="ai-research-engineering-digest">AI Research &amp; Engineering Digest</h1>
+<p><strong>November 4, 2026 · Coverage: November 2–4, plus LongCat’s November 1 technical post · About 10 minutes</strong></p>
+<p>Three signals stand out:</p>
+<ul>
+<li><strong>Routing is becoming a serious systems discipline.</strong> The interesting question is no longer merely “which model is cheaper?” but what the router can observe, how it preserves cache locality, and whether it optimizes cost per verified success.</li>
+<li><strong>Multimodal retrieval is moving beyond one-vector compression.</strong> FactEmbed explicitly separates the visual attributes that should change from those that should remain invariant.</li>
+<li><strong>Agents are beginning to optimize the inference engines beneath them.</strong> SpecPilot’s strongest contribution is not “AI wrote a kernel”; it is a verification loop designed to prevent performance-seeking agents from quietly changing model behavior.</li>
+</ul>
+<p>I checked against the November 1 digest, so Mistral Large 4, PyTorch 2.15, EmbeddingGemma 2, LOWN, the JEPA representation paper, OpenAI’s monitoring architecture, Apple-native speech/decision tooling, and Granite Switch are not repeated.</p>
+<h2 id="1-longcat-2-5-combines-native-visual-tokens-with-long-horizon-agent-training">1. LongCat-2.5 combines native visual tokens with long-horizon agent training</h2>
+<p><em>Commercial model release · technical post dated November 1; API availability November 2</em></p>
+<p>Meituan’s <strong>LongCat-2.5</strong> is a natively multimodal MoE with <strong>1.6 trillion total parameters and about 48 billion active per token</strong>. The scale is similar to LongCat-2.0; the interesting changes are how images enter the backbone and how the model is post-trained.</p>
+<p>Images are converted into multilevel discrete tokens using residual vector quantization over native-resolution visual features. Because the tokenizer is fixed, those tokens can be precomputed offline and packed alongside text during distributed training. Their embeddings are then learned jointly with the language backbone.</p>
+<p>That is an attractive systems design:</p>
+<ul>
+<li>Heavy visual preprocessing becomes cacheable.</li>
+<li>Text and visual data use one sequence-training infrastructure.</li>
+<li>Long-sequence packing and MoE load balancing become less heterogeneous.</li>
+<li>Multimodal agent trajectories can be trained like ordinary token trajectories.</li>
+</ul>
+<p>For post-training, Meituan says it increased long-horizon trajectories, converted real agent failures into reproducible tasks, and applied large-scale RL across multiple harnesses. Its W4A4 serving path quantizes both expert weights and activations to INT4, including communication between MoE experts.</p>
+<p>Vendor-reported results include 88.4 on Terminal-Bench 2.1, 38.5 on Terminal-Bench 4.0, 91.9 on BrowseComp and 78.6 on Vision2Web. These are competitive rather than universally dominant; results also vary substantially with benchmark version and agent harness. The evaluation table mixes in-house measurements with externally sourced competitor numbers, so small cross-model differences should not be overinterpreted.</p>
+<p>The full model is available through LongCat’s chat and API. I could not verify public 2.5 weights or a training repository—the official Hugging Face organization still lists LongCat-2.0 as its newest flagship weight release.</p>
+<p><strong>My read:</strong> technically interesting, operationally inaccessible. The reusable idea is the <strong>offline discrete-vision data path</strong>, not attempting to self-host a trillion-parameter model.</p>
+<p><strong>Explore:</strong> <a href="https://longcat.ai/blog/longcat-2.5">technical post</a> · <a href="https://longcat.ai/platform/docs/ChangeLog.html">API changelog</a></p>
+<h2 id="2-openai-demonstrates-an-agent-spanning-cad-pcb-design-firmware-and-manufacturing">2. OpenAI demonstrates an agent spanning CAD, PCB design, firmware and manufacturing</h2>
+<p><em>Applied research and ecosystem direction · November 3</em></p>
+<p>OpenAI gave GPT-6 Astra an unusually concrete test: create a physical device for talking to Codex, including its enclosure, internal mechanical structures, component selection, PCB layout, interface and firmware.</p>
+<p>Two employees completed the design in under a week as a side project, and a contract manufacturer produced a small batch in under a month. The claim of “no direct human edits” is less magical than it first sounds: the result still went through several rounds of human review and iteration, and Astra repeatedly missed production tolerances, manufacturing constraints and assembly details.</p>
+<p>The more important development is the integration pattern. OpenAI describes agents working inside:</p>
+<ul>
+<li>CAD and ECAD tools.</li>
+<li>Finite-element and airflow simulations.</li>
+<li>Scan-to-editable-solid conversion.</li>
+<li>Manufacturing drawing generation.</li>
+<li>Cross-document constraint and design review.</li>
+</ul>
+<p>Its internal BenchCAD 2.0 evaluation tests reconstruction of parts and assemblies plus circuit-board connectivity. A newer unnamed internal model reportedly scores 0.875, versus 0.594 for Astra at its highest reasoning setting. Neither the benchmark nor the newer model is public, so this is directional evidence, not a reproducible capability result.</p>
+<p>OpenAI is also working with Mazda on aerodynamics and crash-safety workflows and with Chip Ganassi Racing on converting 3D scans into CAD solids and drawings.</p>
+<p><strong>Why this matters:</strong> the frontier is shifting from agents manipulating text files to agents coordinating several specialized engineering representations. The hard problem becomes maintaining one consistent constraint state across geometry, circuits, simulation, software and manufacturing feedback.</p>
+<p>For your computer-vision work, the analogous architecture would connect raw scans, detections, product catalogs, planograms, evaluation traces and customer-specific deployment rules—while ensuring that an update in one representation propagates correctly to the others.</p>
+<p><strong>Read:</strong> <a href="https://openai.com/index/accelerating-engineering-for-the-physical-world/">Accelerating engineering for the physical world</a></p>
+<h2 id="3-lifeval-evaluates-personalized-agents-using-files-history-and-actual-state-changes">3. LifeVal evaluates personalized agents using files, history and actual state changes</h2>
+<p><em>New benchmark and paper · November 2–3</em></p>
+<p><strong>LifeVal</strong> contains 169 long-horizon tasks covering caregiving, health, education, shopping, finances, household administration and government services. Its task distribution was informed by time-use data and a U.S.-centered survey of 3,837 people covering 148 activity categories.</p>
+<p>Unlike generic web-agent benchmarks, each task can include:</p>
+<ul>
+<li>Deidentified real conversation history and memories.</li>
+<li>Personal reference files.</li>
+<li>A simulated application environment.</li>
+<li>An offline-web browser.</li>
+<li>A user-authored rubric.</li>
+<li>A backend state diff showing what the agent actually changed.</li>
+</ul>
+<p>That last part is excellent. The primary grader receives the transcript, created artifacts and backend diff, and is instructed not to credit claimed actions unless the corresponding state or artifact exists. A second grader checks whether the agent exploited internal environment APIs. Detected exploits receive zero.</p>
+<p>OpenAI reports average reward rising from 49.3% for GPT-5.2 to 80.0% for GPT-5.6 and 80.6% for GPT-6 Astra. The tiny 0.6-point Astra improvement should not be treated as decisive without its confidence interval and matched per-task breakdown.</p>
+<p>The important limitations are substantial:</p>
+<ul>
+<li>Only OpenAI models are reported.</li>
+<li>Both automated graders use GPT-5.6.</li>
+<li>The personalized task set and environments are not publicly runnable.</li>
+<li>Rollouts can last up to eight hours.</li>
+<li>Some browsing depends on a non-frozen cache.</li>
+<li>The valuation survey is English-language and U.S.-centered.</li>
+<li>The most persistent reported failure is incorrect information or recommendations; models also overlook relevant facts buried in personal history.</li>
+</ul>
+<p><strong>My read:</strong> the benchmark’s value lies less in its leaderboard and more in its evaluation anatomy. A serious agent evaluation should combine requested outcome, actual state transition, artifact inspection, policy compliance and exploit detection.</p>
+<p><strong>Read:</strong> <a href="https://cdn.openai.com/pdf/lifeval.pdf">paper</a> · <a href="https://openai.com/index/lifeval/">overview and examples</a></p>
+<h2 id="4-route-anything-quantifies-both-the-promise-and-disappointment-of-model-routing">4. Route Anything quantifies both the promise and disappointment of model routing</h2>
+<p><em>Paper · submitted November 3</em></p>
+<p><strong>Route Anything</strong> assembles an unusually broad trajectory matrix: <strong>374,401 scored runs, 452 candidate configurations and 25 benchmarks</strong> spanning language, image and video generation, speech, coding, workplace agents and robotic manipulation.</p>
+<p>The framework models routing as a choice among candidates given an observable state, candidate quality and priced resource consumption. The conceptual result is simple but important: the router’s ceiling is determined not just by model complementarity, but by what information is visible before dispatch.</p>
+<p>The headline numbers tell two stories:</p>
+<ul>
+<li>A hindsight oracle choosing the best candidate for every input beats the strongest fixed candidate by 5.4 points.</li>
+<li>A learned router beats the fixed candidate by only <strong>0.3 points across 16 benchmarks</strong>, capturing roughly 6% of that oracle gap.</li>
+<li>The result is better on video generation, +2.1 points, and robot manipulation, +1.1 points while using 24% less policy time.</li>
+<li>Cost-oriented routes produce much larger gains: the authors report 8.82× average efficiency versus their reference policies, including 25.5× on one coding setup.</li>
+</ul>
+<p>This is the right corrective to routing hype. Candidate models really are complementary—but predicting the winner from the request is hard. Much of the practical value comes from finding a cheaper model that is <em>good enough</em>, not from beating the best model on quality.</p>
+<p>Cautions:</p>
+<ul>
+<li>“8.82× average” combines heterogeneous resources such as dollars and robot-policy time.</li>
+<li>The dramatic coding efficiency comparison uses an expensive reference model; a cheaper fixed model already captures much of the gain.</li>
+<li>Some benchmark groups have small test sets.</li>
+<li>Only one router-training seed is reported in the main table.</li>
+<li>I could not verify a released repository or downloadable trajectory matrix as of November 4.</li>
+</ul>
+<p><strong>Why you should care:</strong> this supports routing on <strong>observable evidence quality</strong>—blur, OCR confidence, candidate margin, image disagreement and retailer slice—rather than asking a generic LLM to predict whether a task is “hard.”</p>
+<p><strong>Read:</strong> <a href="https://arxiv.org/abs/2611.05275">Route Anything</a></p>
+<h2 id="5-google-s-routing-write-up-is-valuable-because-it-reports-what-failed">5. Google’s routing write-up is valuable because it reports what failed</h2>
+<p><em>Technical engineering read · November 3</em></p>
+<p>Google tested a lightweight structured classifier in front of Gemini coding-agent calls. The test is tiny—50 automatically graded prompts—but the negative results are unusually useful.</p>
+<p>First, a prompt-length and keyword heuristic scored 15/16 on the tasks used to design it, then fell to <strong>70.6% agreement on 34 held-out tasks</strong>. Simple extraction prompts were sometimes long; difficult language-runtime puzzles were sometimes short.</p>
+<p>Second, restricting <code>maxOutputTokens</code> did not reduce thinking cost. On 25 hard tasks, the cap broke seven responses—six were truncated during reasoning, and one compressed its reasoning and answered incorrectly.</p>
+<p>Third, a structured classifier routing between Flash-Lite and Flash at low thinking solved all 50 tasks, as did the strongest non-routed baseline. The routed configuration was faster and somewhat cheaper on these short prompts.</p>
+<p>The best section discusses a commonly hidden tradeoff: <strong>routing and prompt caching can fight each other</strong>. If long agent turns repeatedly send one large repository context, switching models may require two caches or sacrifice the cache discount. Google’s recommendation is to route small standalone operations—schema checks, log extraction, bounded classification—while keeping long context-heavy turns on one model.</p>
+<p>Limitations are explicit: one run, 50 prompts, hand-defined difficulty, simple grading, and benchmark code not yet released.</p>
+<p><strong>My takeaway:</strong> before building a router, try the inexpensive model at a lower reasoning setting. Routing only helps if the downstream choices differ materially in cost or capability.</p>
+<p><strong>Read:</strong> <a href="https://developers.googleblog.com/en/cost-per-task-using-cheap-classifiers-to-route-across-gemini-models-and-thinking-levels/">Cost per task: using cheap classifiers to route across Gemini models and thinking levels</a></p>
+<h2 id="6-factembed-gives-composed-retrieval-an-internal-representation-of-what-changes">6. FactEmbed gives composed retrieval an internal representation of “what changes”</h2>
+<p><em>Paper · submitted November 3</em></p>
+<p>Composed image retrieval asks for an image using another image plus an edit instruction: “the same shirt, but blue,” or “this package, except the 12-count version.”</p>
+<p>Most MLLM retrievers compress the reference image and instruction directly into one contrastive embedding. <strong>FactEmbed</strong> argues that this wastes the model’s compositional capacity: the model is never explicitly encouraged to determine which factors change and which remain invariant.</p>
+<p>Its solution inserts eight learnable latent tokens into Qwen2.5-VL-7B. During training:</p>
+<ol>
+<li>A lightweight decoder reconstructs target DINO features from those latents.</li>
+<li>A coarse 2×2 target-layout prior handles low-frequency geometry, pushing the latents toward residual semantic details.</li>
+<li>Factor-level InfoNCE with optimal-transport matching aligns query and target factors.</li>
+<li>Attention distillation preserves the factorization in deeper layers.</li>
+<li>The ordinary EOS vector performs gallery retrieval; a mean latent vector reranks the top 100 candidates.</li>
+</ol>
+<p>Both vectors come from one forward pass.</p>
+<p>On Refined-CIRR, FactEmbed reports R@1 of <strong>68.99</strong>, versus 67.41 for its strongest directly comparable ReCALL baseline. On Refined-FashionIQ, average R@10 rises from 69.48 to <strong>71.13</strong>. The gains are real but modest; the paper’s ablations suggest that post-training data augmentation contributes alongside the factorization itself.</p>
+<p>This is immediately relevant to product recognition. A UPC decision is effectively composed retrieval:</p>
+<blockquote>
+<p>Keep brand and product identity; modify flavor, size, count, packaging generation or region.</p>
+</blockquote>
+<p>The caveats: results are author-run on established but relatively narrow composed-retrieval datasets; the method uses a 7B backbone and supervised triplets; and the repository currently says training code “will be released,” although model/demo links are present.</p>
+<p><strong>Read:</strong> <a href="https://arxiv.org/abs/2611.05193">paper</a> · <a href="https://cvlab-kaist.github.io/FactEmbed/">project</a> · <a href="https://github.com/cvlab-kaist/FactEmbed">repository</a></p>
+<h2 id="7-specpilot-uses-agents-to-discover-verified-speculative-decoding-optimizations">7. SpecPilot uses agents to discover verified speculative-decoding optimizations</h2>
+<p><em>Paper and runnable code · submitted November 2</em></p>
+<p><strong>SpecPilot</strong> is an agentic optimization loop for speculative decoding:</p>
+<ol>
+<li>A cost model estimates the performance ceiling and identifies the largest current bottleneck.</li>
+<li>Parallel agents explore algorithm and implementation changes.</li>
+<li>A kernel-focused agent optimizes the relevant low-level operations.</li>
+<li>Candidate changes are benchmarked.</li>
+<li>“Token forcing” compares outputs against the stock target model to reject optimizations that alter behavior.</li>
+<li>Validated mechanisms enter structured memory for reuse across deployments.</li>
+</ol>
+<p>The loop discovered several nontrivial mechanisms:</p>
+<ul>
+<li>A lossless 12-bit weight format with specialized low-row GEMMs.</li>
+<li>Best-first tree verification.</li>
+<li>Two-level verification that chains two drafts per exact target pass.</li>
+<li>Several batching optimizations.</li>
+</ul>
+<p>Across the authors’ deployments, single-request speedup over autoregressive decoding increased from as much as 4.46× with stock speculative decoding to <strong>10.87×</strong>; in one batched configuration it rose from 1.94× to <strong>3.93×</strong>. The W12 format alone reportedly accelerates ordinary single-request autoregressive decoding by 1.19–1.28× on the tested models.</p>
+<p>The verification design is the real contribution. Ordinary task accuracy could not reliably distinguish injected faulty implementations from lossless ones. Token-level comparison caught both injected faults.</p>
+<p>The code is Apache-2.0 and includes six discovered engines plus serving, benchmarking and verification scripts.</p>
+<p>Important boundaries:</p>
+<ul>
+<li>The experiments use greedy decoding.</li>
+<li>Targets are roughly 4B–30B models.</li>
+<li>Hardware is H100 or RTX Pro 6000.</li>
+<li>Evaluation spans five math, code and chat workloads.</li>
+<li>The serving base is a frozen SGLang build.</li>
+<li>These are author-run systems results, not independent reproductions.</li>
+</ul>
+<p>Still, this is one of the best examples yet of an agent discovering systems changes while operating under an executable semantic-equivalence contract.</p>
+<p><strong>Read/run:</strong> <a href="https://arxiv.org/abs/2611.02501">paper</a> · <a href="https://github.com/StargazerX0/SpecPilot">repository</a></p>
+<h2 id="the-two-deeper-reads-i-d-choose">The two deeper reads I’d choose</h2>
+<ol>
+<li><p><strong><a href="https://arxiv.org/abs/2611.05193">FactEmbed</a></strong> — most directly relevant to your retrieval and product-recognition work. Pay particular attention to the distinction between target imagination, factor alignment and cheap late reranking.</p>
+</li>
+<li><p><strong><a href="https://arxiv.org/abs/2611.02501">SpecPilot</a></strong> — the strongest research-engineering artifact. The changing-bottleneck loop and token-forcing verification matter more than the headline speedup.</p>
+</li>
+</ol>
+<h2 id="one-concrete-experiment-attribute-delta-retrieval-for-upc-level-hard-negatives">One concrete experiment: attribute-delta retrieval for UPC-level hard negatives</h2>
+<p>Build a <strong>2,000-query composed product-retrieval benchmark</strong>.</p>
+<p>For each reference product crop, generate one controlled instruction such as:</p>
+<ul>
+<li>Same brand and flavor, but 12 oz instead of 8 oz.</li>
+<li>Same product, but the six-pack.</li>
+<li>Same brand and size, but sugar-free.</li>
+<li>Same UPC identity under newer packaging.</li>
+<li>Preserve everything except the regional label.</li>
+<li>Requested variant is absent.</li>
+</ul>
+<p>Place the true target among near-duplicate candidates from the same brand family. Compare:</p>
+<ol>
+<li>Your existing ArcFace/SigLIP plus OCR fusion.</li>
+<li>EmbeddingGemma 2 using image plus instruction.</li>
+<li>A Qwen-VL global embedding baseline.</li>
+<li>FactEmbed-style EOS retrieval plus factor-vector reranking.</li>
+<li>The best retriever with a small router deciding whether OCR, another view or human review is required.</li>
+</ol>
+<p>Measure R@1/5, variant-confusion rate, absent-target false acceptance, performance by attribute type, latency and calibration at a fixed false-accept rate.</p>
+<p>The revealing question is:</p>
+<p><strong>Can the representation identify exactly which product attributes must change—or remain invariant—without requiring a generative VLM to reconsider every candidate individually?</strong></p>
+<nav class="issue-nav" aria-label="Other issues"><a href="../2026/2026-11-01.html">← November 1, 2026</a><a href="../2026/2026-11-08.html">November 8, 2026 →</a></nav></article></div></main>
+<footer class="site-footer"><span>Curated for curious researchers. Built for useful work.</span><a href="https://github.com/Zhuogang/weekly_ai_news">Markdown originals ↗</a><p>Historical backfill is incomplete. Partial reports are labeled; archived claims are preserved as written and are not revalidated by publication.</p></footer></body></html>

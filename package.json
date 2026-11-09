@@ -1,0 +1,8 @@
+{
+  "name": "weekly-ai-news",
+  "private": true,
+  "type": "module",
+  "scripts": { "build": "node scripts/build-site.mjs", "check": "node scripts/check-site.mjs" },
+  "engines": { "node": ">=22" },
+  "dependencies": { "marked": "17.0.5", "katex": "0.16.22" }
+}
