@@ -1,0 +1,148 @@
+{
+  "backfill_date": "2026-11-08",
+  "source_export": "Weekly AI news.html",
+  "source_export_sha256": "4bebdc594067c17d489ee0963ebb32c2be9f4634fb842056792039a3bc4448b6",
+  "scope": "All 14 full digest messages found in the provided conversation export, September 9–November 8, 2026, are accounted for in the archive. This is not a claim that every scheduled issue was delivered.",
+  "archive_note": "All 14 full digest messages found in the November 8 export are archived, including the restored October 28 issue. The export has no separate October 11, 14, 18, or 21 issues; October 25 covers October 8–24. No missing issue has been reconstructed.",
+  "unavailable_scheduled_dates": [
+    "2026-10-11",
+    "2026-10-14",
+    "2026-10-18",
+    "2026-10-21"
+  ],
+  "gap_note": "No separately dated digest messages for these dates occur in the provided export. Whether separate issues were delivered outside the export is unverified. No placeholders or reconstructed report text were created.",
+  "normalization": [
+    "Original report dates are verified against message timestamps in America/Los_Angeles.",
+    "Existing complete November reports are retained unchanged; imported originals preserve their prose, source URLs, limitations, deeper reads, and experiments.",
+    "ChatGPT citation widgets in imported reports are replaced by explicit Markdown links using only the source URLs recorded with that message in the export.",
+    "LaTeX display and inline delimiters are normalized to GitHub-compatible dollar delimiters without changing the expressions.",
+    "Setup messages, follow-up discussion, tool calls, and unrelated conversation content are excluded.",
+    "Archived claims are preserved as written and have not been independently revalidated during recovery."
+  ],
+  "reports": [
+    {
+      "date": "2026-09-09",
+      "path": "reports/2026/2026-09-09.md",
+      "source_message_id": "602c131b-40e3-5f9b-aa8e-2cb5c6c7e9bf",
+      "original_markdown_sha256": "a3bb98bac0e1792a392443a95e4fc57252cc74ddc58a4568fcd90eb29254f5c3",
+      "action": "added_original_report",
+      "converted_citation_widgets": 0,
+      "archived_sha256_at_import": "7a560c1f491c0c367e00874ecce0df36018199bd7d3bc426a9421c0496fa3e90"
+    },
+    {
+      "date": "2026-09-13",
+      "path": "reports/2026/2026-09-13.md",
+      "source_message_id": "92339693-6200-5df0-ba45-240814bb9a6e",
+      "original_markdown_sha256": "499a232a5f080b4a51c06514551cc976899ce9625ec964c64f15975ff297859c",
+      "action": "added_original_report",
+      "converted_citation_widgets": 0,
+      "archived_sha256_at_import": "2df0c93e92c9613f9cd574649cb0990b73c9ccc19c2cec951e383cfc5b30695b"
+    },
+    {
+      "date": "2026-09-16",
+      "path": "reports/2026/2026-09-16.md",
+      "source_message_id": "6dc0ecdf-3dc3-5d9d-8409-d60121e199c7",
+      "original_markdown_sha256": "0a25387d5b4aaabf33e9222e895633c7252ca54319e0252da0d07432f57d0d2d",
+      "action": "added_original_report",
+      "converted_citation_widgets": 0,
+      "archived_sha256_at_import": "da08f9cf6d38ccd2728bcceb945743df7cab0e235fcd3dd8025b40edbbf9d8ba"
+    },
+    {
+      "date": "2026-09-20",
+      "path": "reports/2026/2026-09-20.md",
+      "source_message_id": "33aa4f54-d9f7-58d1-910b-2f23a5c9e44b",
+      "original_markdown_sha256": "bb616463b4e5f2ee32f37134d73d72968b9e60e5c514b31acf113e0dff0076ac",
+      "action": "added_original_report",
+      "converted_citation_widgets": 0,
+      "archived_sha256_at_import": "dfaee05aed2c8f39d0f61bf57ec8dba9157abb3d7fe34d98dcf73a6f4e65deee"
+    },
+    {
+      "date": "2026-09-23",
+      "path": "reports/2026/2026-09-23.md",
+      "source_message_id": "0ab95439-f1ab-546b-a21b-182a5a377db1",
+      "original_markdown_sha256": "0ccc828fe89cccd19cb6d8bd00131025d4790302b585cf5b8bfbc38b67fda377",
+      "action": "added_original_report",
+      "converted_citation_widgets": 0,
+      "archived_sha256_at_import": "b66e864c9d0c15a6c85d558f1ea84bd184ce81d6e88f859a21b32779210847a0"
+    },
+    {
+      "date": "2026-09-27",
+      "path": "reports/2026/2026-09-27.md",
+      "source_message_id": "1d64fab3-ad9f-5a00-96f4-b3374d40df98",
+      "original_markdown_sha256": "0654f50781f1d4af5a5b95e9a334a754da7141b4cd23ffb54f2a113926d6a0ce",
+      "action": "added_original_report",
+      "converted_citation_widgets": 9,
+      "archived_sha256_at_import": "821667f43fd69008e006b18acd2f6540674cdb8f725602a20c4b6eacfd13d988"
+    },
+    {
+      "date": "2026-09-30",
+      "path": "reports/2026/2026-09-30.md",
+      "source_message_id": "17aa1dc1-0a31-53e5-805f-6c413f2f1dfe",
+      "original_markdown_sha256": "ede1b6a7cae6dfa4a9ee9e958af6d8dfe74c62c2832cc7038a1d702a38808c49",
+      "action": "added_original_report",
+      "converted_citation_widgets": 13,
+      "archived_sha256_at_import": "ec6ed3e4f9e345875d0c3c73b5316ed1b04a7f5c484f08bf55ffd3e24167fb87"
+    },
+    {
+      "date": "2026-10-04",
+      "path": "reports/2026/2026-10-04.md",
+      "source_message_id": "8f7ea1f8-1ec5-5495-ad3c-377a97d6343e",
+      "original_markdown_sha256": "2071277fc359e34eab3eb6e0df08713953c0fe8c931bbf8d7b969c098958bc94",
+      "action": "added_original_report",
+      "converted_citation_widgets": 18,
+      "archived_sha256_at_import": "d8e47384dfee5bfa6344bb56abc983827122d4b91bbf04ac29dd08221ec35166"
+    },
+    {
+      "date": "2026-10-07",
+      "path": "reports/2026/2026-10-07.md",
+      "source_message_id": "186af1c5-7c96-5490-a1b4-cccf06d5a57e",
+      "original_markdown_sha256": "04d663d78295ba6439683679515f17dc0a1afa31bfedc130cab5125998f1bf8c",
+      "action": "added_original_report",
+      "converted_citation_widgets": 22,
+      "archived_sha256_at_import": "382727fdcd34977fd2a483e89a9ae84e71bc8830f415ab9ea3db83181283e3ad"
+    },
+    {
+      "date": "2026-10-25",
+      "path": "reports/2026/2026-10-25.md",
+      "source_message_id": "b5e2c486-0a7d-5d43-bb2b-0f5483e6c2a6",
+      "original_markdown_sha256": "0eec7ac1f356cf10c794b58ded8dd4c246b774e84c60379a9914aea7a79a0f12",
+      "action": "added_original_report",
+      "converted_citation_widgets": 14,
+      "archived_sha256_at_import": "6d18f6d49013d24fb7761f80ddb84e497305e3888dda0cbed2e2f8ec10b39b6c"
+    },
+    {
+      "date": "2026-10-28",
+      "path": "reports/2026/2026-10-28.md",
+      "source_message_id": "6085745e-7f96-5a3c-b99f-3373402ce137",
+      "original_markdown_sha256": "bd1a1564987a4f25e58f64e5ae4985ae0ba9c9b554c5d69c642c80bc625f008d",
+      "action": "replaced_partial_report",
+      "replaced_path": "reports/2026/2026-10-28.partial.md",
+      "converted_citation_widgets": 13,
+      "archived_sha256_at_import": "d9f545526e50a24fab7dd6cb0755e001397c74d491e2bdcc2e14f36e61783d5c"
+    },
+    {
+      "date": "2026-11-01",
+      "path": "reports/2026/2026-11-01.md",
+      "source_message_id": "2caddb48-f62a-5997-bf89-425fcc128794",
+      "original_markdown_sha256": "5bacbfd94eab18cb8138f894fc5af3e7b2416462fc559aa9158390ef555b9d43",
+      "action": "retained_existing_complete_report",
+      "archived_sha256_at_import": "bd6a0ae89c6c0232dca06e849227af2794eb96ff0e0e8b66be87b6e555d5b86b"
+    },
+    {
+      "date": "2026-11-04",
+      "path": "reports/2026/2026-11-04.md",
+      "source_message_id": "432e98bc-8bd8-5b33-8c44-a936ab7460d4",
+      "original_markdown_sha256": "5197d2083ec90e901196a2781bd203e30427375850881c2140034db5ea94bb70",
+      "action": "retained_existing_complete_report",
+      "archived_sha256_at_import": "c57ede887bb0fc6f53b868290000f1fc85d866f2afdb72c25747131abe2903e3"
+    },
+    {
+      "date": "2026-11-08",
+      "path": "reports/2026/2026-11-08.md",
+      "source_message_id": "592542a2-00d0-5983-8eef-3ccf08e5ce35",
+      "original_markdown_sha256": "edda1bde53d87c62d856fb87b2ab956de34c8dd9d4bff21ccc78de7fe7ebdca0",
+      "action": "retained_existing_complete_report",
+      "archived_sha256_at_import": "5ce1dc119745acf6b18ca9e936271d56667cfb88f65136c4b552a50e5de55d71"
+    }
+  ]
+}

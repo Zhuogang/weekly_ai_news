@@ -10,19 +10,37 @@ The reading site includes the latest complete issue, a searchable archive, full 
 
 | Report date | File | Archive status |
 | --- | --- | --- |
-| 2026-10-28 | [October 28](reports/2026/2026-10-28.partial.md) | Partial: begins inside item 3; introduction and items 1–2 are unavailable |
+| 2026-09-09 | [September 9](reports/2026/2026-09-09.md) | Complete text |
+| 2026-09-13 | [September 13](reports/2026/2026-09-13.md) | Complete text |
+| 2026-09-16 | [September 16](reports/2026/2026-09-16.md) | Complete text |
+| 2026-09-20 | [September 20](reports/2026/2026-09-20.md) | Complete text |
+| 2026-09-23 | [September 23](reports/2026/2026-09-23.md) | Complete text |
+| 2026-09-27 | [September 27](reports/2026/2026-09-27.md) | Complete text |
+| 2026-09-30 | [September 30](reports/2026/2026-09-30.md) | Complete text |
+| 2026-10-04 | [October 4](reports/2026/2026-10-04.md) | Complete text |
+| 2026-10-07 | [October 7](reports/2026/2026-10-07.md) | Complete text |
+| 2026-10-25 | [October 25](reports/2026/2026-10-25.md) | Complete text |
+| 2026-10-28 | [October 28](reports/2026/2026-10-28.md) | Complete text: original restored from export |
 | 2026-11-01 | [November 1](reports/2026/2026-11-01.md) | Complete text |
 | 2026-11-04 | [November 4](reports/2026/2026-11-04.md) | Complete text |
 | 2026-11-08 | [November 8](reports/2026/2026-11-08.md) | Complete text |
 
-The historical backfill is **incomplete**. Earlier reports need their original conversation text before they can be archived faithfully. No reconstructed summaries or empty report placeholders are included.
+## Archive provenance and gaps
+
+The archive contains **14 complete reports**, dated **September 9–November 8, 2026**. All 14 full digest messages found in the provided `Weekly AI news.html` conversation export are accounted for. Ten earlier reports were added, the October 28 partial excerpt was replaced with its complete original, and the three existing November reports were retained unchanged.
+
+This is **complete for the digest messages in this export**, not a claim that every scheduled issue was delivered. The export has no separately dated October 11, 14, 18, or 21 reports. The October 25 issue explicitly covers October 8–24. Whether separate reports were delivered outside this export is unverified; no missing report text or empty placeholder has been invented.
+
+[`archive-status.json`](archive-status.json) records the export checksum, original message IDs and text checksums, import actions, normalization rules, and unresolved dates. Only digest reports are published; the full conversation export, setup discussion, and tool data are not included.
+
+Historical statements inside a dated report—including statements that older originals were unavailable at the time—are preserved. The recovery status above describes the archive now. Archiving does not independently revalidate historical technical claims.
 
 ## Format
 
 - Complete reports use `reports/YYYY/YYYY-MM-DD.md`, dated by the report's original date.
 - Incomplete recovered excerpts use `YYYY-MM-DD.partial.md` and identify the missing text explicitly.
 - Preserve each report's original wording, technical details, caveats, reading recommendations, experiments, and explicit source URLs.
-- ChatGPT-only citation widgets are omitted because they do not resolve on GitHub. Existing Markdown source links are retained. Mathematical display delimiters are normalized for GitHub.
+- ChatGPT-only citation widgets are removed, or converted to explicit Markdown source links when their original destinations are present in the export. Existing Markdown source links are retained. Display and inline math delimiters are normalized for GitHub.
 - Archived reports preserve the claims made at the time of writing; archiving does not revalidate or update them.
 
 ## Ongoing archive
