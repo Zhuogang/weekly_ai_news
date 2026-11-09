@@ -11,9 +11,9 @@
 
 ## GitHub Pages reading site
 
-- The public reading site is `https://zhuogang.github.io/weekly_ai_news/`, published from `main:/docs` through GitHub Pages.
+- The reading site is `https://zhuogang.github.io/weekly_ai_news/`. GitHub Actions builds and deploys it through `.github/workflows/pages.yml` on pushes to `main`. The owner activates it by selecting **GitHub Actions** as the Pages source.
 - Markdown reports remain canonical. Never edit report prose merely to change website layout.
-- After adding or changing a report, run `npm ci --ignore-scripts`, `npm run build`, and `npm run check`. Commit the generated `docs/` alongside the report and README index. The builder automatically updates the homepage, archive, report pages, and navigation.
-- Change design in `site/assets/` and generation in `scripts/build-site.mjs`; do not hand-edit `docs/`.
+- For routine digest delivery, commit the complete report and README index. The scheduled task does not need Node.js or a local website build. Never commit generated HTML; the workflow builds ignored `dist/`, validates it, and uploads it as a Pages artifact. Pull requests validate without deploying.
+- Change design in `site/assets/` and generation in `scripts/build-site.mjs`. For code changes, run `npm ci --ignore-scripts`, `npm run build`, and `npm run check` locally when available. The builder automatically updates the homepage, archive, report pages, and navigation.
 - Preserve complete versus partial labels and accurate historical-backfill status on the website.
-- Verify the remote commit includes the generated site. Check the live dated report when possible; report publishing failures honestly without withholding the chat digest.
+- Verify the remote commit contains the report. Inspect the publishing workflow run for that exact commit when available, and check the live dated report after a successful deployment. Distinguish archive success, pending deployment, and publishing failure; never claim the website was updated without evidence. Deliver the full chat digest even when deployment is unavailable.

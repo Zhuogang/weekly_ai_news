@@ -5,7 +5,7 @@ import { Marked } from 'marked';
 import katex from 'katex';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const out = resolve(root, 'docs');
+const out = resolve(root, 'dist');
 const repo = 'https://github.com/Zhuogang/weekly_ai_news';
 const base = 'https://zhuogang.github.io/weekly_ai_news/';
 const escape = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

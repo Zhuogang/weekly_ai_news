@@ -31,9 +31,13 @@ Save every new digest here, update the report index, and commit the report to `m
 
 ## Website publishing
 
-GitHub Pages serves the generated `docs/` directory from `main`. In **Settings → Pages**, select **Deploy from a branch**, then **main** and **/docs**. This one-time setting requires repository administration access. Subsequent commits to that source publish automatically.
+GitHub Actions builds and publishes the reading site using [`pages.yml`](.github/workflows/pages.yml). Every push to `main` installs locked dependencies with Node.js 24, generates the site from the Markdown originals, checks it, and deploys the validated artifact to GitHub Pages. Pull requests run the build and checks without publishing.
 
-After adding or correcting a report, rebuild the website in the same commit:
+**One-time activation:** in **Settings → Pages → Build and deployment → Source**, select **GitHub Actions**. This setting requires repository administration access. Then open [the publishing workflow](https://github.com/Zhuogang/weekly_ai_news/actions/workflows/pages.yml) and choose **Run workflow** on `main`, or rerun the latest failed deployment. Future report commits publish automatically. No personal access token or extra repository secret is required by the workflow.
+
+For each new digest, commit only its complete Markdown report and the README index. The scheduled digest task does the research and archive write; GitHub Actions handles website generation and publishing. Generated HTML is an artifact, not tracked source. The workflow also supports manual runs from the Actions tab.
+
+To check presentation or generation changes locally:
 
 ```sh
 npm ci --ignore-scripts
@@ -41,6 +45,8 @@ npm run build
 npm run check
 ```
 
-Commit the report, README index, and generated `docs/` together. The builder discovers dated Markdown reports automatically; no manual website index is needed. It preserves the source files, renders equations as native MathML, and keeps partial archives distinct from complete issues. Search covers dates, section headings, and opening highlights. The site uses no analytics, remote fonts, or runtime CDN dependencies.
+The generated website is written to ignored `dist/`. The builder discovers dated Markdown reports automatically; no manual website index is needed. It preserves the source files, renders equations as native MathML, and keeps partial archives distinct from complete issues. Search covers dates, section headings, and opening highlights. The site uses no analytics, remote fonts, or runtime CDN dependencies.
 
-Edit presentation in `site/assets/` and generation logic in `scripts/build-site.mjs`, then rebuild. `docs/` is generated; do not edit it by hand. A local preview can be served with `python -m http.server 8000 --directory docs`.
+Edit presentation in `site/assets/` and generation logic in `scripts/build-site.mjs`. Do not hand-edit or commit generated output. A local preview can be served with `python -m http.server 8000 --directory dist`.
+
+Check [workflow runs](https://github.com/Zhuogang/weekly_ai_news/actions/workflows/pages.yml) for build and deployment logs. A failed build or validation check prevents deployment. If the initial deployment fails because Pages is not configured, activate it as above and rerun the failed deployment; the archive commit remains valid.
