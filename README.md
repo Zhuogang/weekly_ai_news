@@ -27,10 +27,11 @@ The reading site includes the latest complete issue, a searchable archive, full 
 | 2026-11-11 | [November 11](reports/2026/2026-11-11.md) | Complete text |
 | 2026-11-15 | [November 15](reports/2026/2026-11-15.md) | Complete text |
 | 2026-11-18 | [November 18](reports/2026/2026-11-18.md) | Complete text |
+| 2026-11-22 | [November 22](reports/2026/2026-11-22.md) | Complete text |
 
 ## Archive provenance and gaps
 
-The archive contains **17 complete reports**, dated **September 9–November 18, 2026**, including the ongoing November issues. All 14 full digest messages found in the provided `Weekly AI news.html` conversation export are accounted for. Ten earlier reports were added, the October 28 partial excerpt was replaced with its complete original, and the three existing November reports were retained unchanged.
+The archive contains **18 complete reports**, dated **September 9–November 22, 2026**, including the ongoing November issues. All 14 full digest messages found in the provided `Weekly AI news.html` conversation export are accounted for. Ten earlier reports were added, the October 28 partial excerpt was replaced with its complete original, and the three existing November reports were retained unchanged.
 
 This is **complete for the digest messages in this export**, not a claim that every scheduled issue was delivered. The export has no separately dated October 11, 14, 18, or 21 reports. The October 25 issue explicitly covers October 8–24. Whether separate reports were delivered outside this export is unverified; no missing report text or empty placeholder has been invented.
 
